@@ -1,9 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
 import AuthLayout from '../../component/auth_layout'
 import FormInput from '../../component/form_input'
+import { api, userData } from '../../api/api';
+import type { User } from '../../types/user';
 
 interface FormData {
     email: string
@@ -17,6 +19,9 @@ interface FormErrors {
 }
 
 export default function LoginPage() {
+    const cookie = document.cookie;
+    const [data, setData] = useState<User[]>([]);
+
     const [formData, setFormData] = useState<FormData>({
         email: '',
         password: '',
@@ -69,18 +74,43 @@ export default function LoginPage() {
         setIsLoading(true)
         try {
             await new Promise(resolve => setTimeout(resolve, 1500))
-            console.log('[v0] Login successful:', formData.email)
-            setErrors({ submit: 'Login successful! Redirecting...' })
+            console.log('[v0] Login successful:', formData.email);
+            setErrors({ submit: 'Login successful! Redirecting...' });
+            const login = await api.post('/user/login', formData, {
+                withCredentials: true,
+            });
+            getData();
+            // const user = await userData();
+            // console.log('User data fetched:', user);
+            // setData(user);
+            console.log('Login response:', login.data);
         } catch (error) {
             setErrors({
                 submit: 'Login failed. Please try again.',
             });
-            console.error('Login error:', error) ;
+            console.error('Login error:', error);
         } finally {
             setIsLoading(false)
         }
     }
 
+  const getData = async () => {
+            try {
+                const user = await userData();
+                setData(user);
+                // console.log('Data fetched:', response.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+    // get data from login 
+
+
+    useEffect(() => {
+        
+        getData();
+    }, []);
     return (
         <AuthLayout
             title="Welcome back"
@@ -122,8 +152,8 @@ export default function LoginPage() {
                             onChange={handleChange}
                             autoComplete="current-password"
                             className={`w-full px-4 py-2 rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 pr-10 ${errors.password
-                                    ? 'border-destructive bg-destructive/5'
-                                    : 'border-border bg-card text-foreground hover:border-primary/50'
+                                ? 'border-destructive bg-destructive/5'
+                                : 'border-border bg-card text-foreground hover:border-primary/50'
                                 }`}
                         />
                         <button
@@ -150,13 +180,23 @@ export default function LoginPage() {
 
                 {errors.submit && (
                     <div className={`p-4 rounded-lg text-sm ${errors.submit.includes('successful')
-                            ? 'bg-green-50 text-green-800 border border-green-200'
-                            : 'bg-destructive/10 text-destructive border border-destructive/20'
+                        ? 'bg-green-50 text-green-800 border border-green-200'
+                        : 'bg-destructive/10 text-destructive border border-destructive/20'
                         }`}>
                         {errors.submit}
                     </div>
                 )}
 
+                <h1 className='text-green-600'>this is cookie : {cookie}</h1>
+                <div>
+                    {data.map((user, index) => (
+                        <div key={index} className="p-4 mb-2 border rounded-lg bg-card">
+                            <p><strong>ID:</strong> {user.user_id}</p>
+                            <p><strong>Email:</strong> {user.email}</p>
+                            <p><strong>Username:</strong> {user.username}</p>
+                        </div>
+                    ))}
+                </div>
                 <button
                     type="submit"
                     disabled={isLoading}

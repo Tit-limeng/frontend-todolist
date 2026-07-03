@@ -5,7 +5,8 @@ import UserProfile from '../component/user_profile'
 import TodoInput from '../component/input_box'
 import TodoStats from '../component/state'
 import TodoList from '../component/todo_list'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { userData } from '../api/api'
 
 
 
@@ -19,7 +20,7 @@ function Home() {
 
   const [todos, setTodos] = useState<Todo[]>([])
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all')
-  const [userName, setUserName] = useState('Alex Morgan')
+  const [username, setUsername] = useState('')
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
   const addTodo = (text: string) => {
@@ -56,23 +57,37 @@ function Home() {
   const activeCount = todos.filter(todo => !todo.completed).length
 
   const handleSaveProfile = (newName: string) => {
-    setUserName(newName)
+    setUsername(newName)
     setIsEditModalOpen(false)
   }
+// const [initials, setInitials] = useState('');
 
+    useEffect(()=>{
+      const getData = async () => {
+      try {
+        const data = await userData();
+        console.log('Fetched user data:', data[0].username);
+        setUsername(data[0].username) ;
+
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    } 
+      getData();
+    },[]) ;
   return (
     <>
  <main className="min-h-screen bg-background pb-12">
       {/* Profile Edit Modal */}
       <ProfileModalEdit
         isOpen={isEditModalOpen}
-        userName={userName}
+        username={username}
         onSave={handleSaveProfile}
         onClose={() => setIsEditModalOpen(false)}
       />
      <div className="fixed top-4 right-4 z-50">
         <UserProfile
-          userName={userName}
+          username={username}
           onProfileClick={() => setIsEditModalOpen(true)}
         />
       </div>

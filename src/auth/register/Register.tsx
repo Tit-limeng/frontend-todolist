@@ -4,15 +4,16 @@ import { useState } from 'react'
 import {Link} from 'react-router-dom'
 import AuthLayout from '../../component/auth_layout'
 import FormInput from '../../component/form_input'
+import { api } from '../../api/api'
 
 interface FormData {
-  name: string
+  username: string
   email: string
   password: string
 }
 
 interface FormErrors {
-  name?: string
+  username?: string
   email?: string
   password?: string
   submit?: string
@@ -20,10 +21,10 @@ interface FormErrors {
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState<FormData>({
-    name: '',
+    username: '',
     email: '',
     password: '',
-  })
+  }) ;
   const [errors, setErrors] = useState<FormErrors>({})
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
@@ -31,10 +32,10 @@ export default function RegisterPage() {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {}
 
-    if (!formData.name) {
-      newErrors.name = 'Full name is required'
-    } else if (formData.name.length < 2) {
-      newErrors.name = 'Name must be at least 2 characters'
+    if (!formData.username) {
+      newErrors.username = 'Username is required'
+    } else if (formData.username.length < 2) {
+      newErrors.username = 'Username must be at least 2 characters'
     }
 
     if (!formData.email) {
@@ -79,11 +80,12 @@ export default function RegisterPage() {
 
     setIsLoading(true)
     try {
-      // Simulate registration request
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      // In a real app, this would register the user and redirect to login/dashboard
-      console.log('[v0] Registration successful:', formData.email)
-      setErrors({ submit: 'Registration successful! Redirecting...' })
+      await new Promise(resolve => setTimeout(resolve, 1500)) ;
+      const response = await api.post('/user/create' , formData) ;
+      if (response.status === 201) {
+      console.log('[v0] Registration successful:', response.data); ;
+      setErrors({ submit: 'Registration successful! Redirecting...' }) ;
+    }
     } catch (error) {
       setErrors({
         submit: 'Registration failed. Please try again.',
@@ -101,15 +103,15 @@ export default function RegisterPage() {
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         <FormInput
-          id="name"
-          name="name"
+          id="username"
+          name="username"
           type="text"
           label="Full name"
           placeholder="John Doe"
-          value={formData.name}
+          value={formData.username}
           onChange={handleChange}
-          error={errors.name}
-          autoComplete="name"
+          error={errors.username}
+          autoComplete="username"
         />
 
         <FormInput

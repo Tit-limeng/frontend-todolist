@@ -1,16 +1,32 @@
+import { useEffect, useState } from 'react'
+import { userData } from '../api/api'
+
 interface UserProfileProps {
-  userName: string
+  username: string
   onProfileClick: () => void
 }
 
-export default function UserProfile({ userName, onProfileClick }: UserProfileProps) {
+export default function UserProfile({ username, onProfileClick }: UserProfileProps) {
   // Get initials from user name
-  const initials = userName
-    .split(' ')
-    .map(name => name[0])
-    .join('')
-    .toUpperCase()
+  const [initials, setInitials] = useState('');
 
+    useEffect(()=>{
+      const getData = async () => {
+      try {
+        const data = await userData();
+        console.log('Fetched user data:', data[0].username);
+        setInitials(data[0].username
+        .split(' ')
+        .map(( username : string) => username[0])
+        .join('')
+        .toUpperCase()) ;
+
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    } 
+      getData();
+    },[]) ;
   return (
     <button
       onClick={onProfileClick}
@@ -23,7 +39,7 @@ export default function UserProfile({ userName, onProfileClick }: UserProfilePro
       </div>
       {/* User name */}
       <span className="text-sm font-medium text-foreground hidden sm:inline">
-        {userName}
+        {username}
       </span>
     </button>
   )

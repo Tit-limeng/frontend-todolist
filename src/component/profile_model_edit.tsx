@@ -3,18 +3,18 @@ import { useState } from 'react'
 
 interface ProfileEditModalProps {
   isOpen: boolean
-  userName: string
+  username: string
   onSave: (newName: string) => void
   onClose: () => void
 }
 
 export default function ProfileModalEdit({
   isOpen,
-  userName,
+  username,
   onSave,
   onClose,
 }: ProfileEditModalProps) {
-  const [input, setInput] = useState(userName)
+  const [input, setInput] = useState(username)
   const [error, setError] = useState('')
 
   const handleSave = () => {
@@ -29,11 +29,11 @@ export default function ProfileModalEdit({
     }
     onSave(trimmedName)
     setError('')
-    setInput(userName)
+    setInput(username)
   }
 
   const handleClose = () => {
-    setInput(userName)
+    setInput(username)
     setError('')
     onClose()
   }
@@ -68,7 +68,7 @@ export default function ProfileModalEdit({
           </label>
           <input
             type="text"
-            value={input}
+            value={username}
             onChange={(e) => {
               setInput(e.target.value)
               setError('')
