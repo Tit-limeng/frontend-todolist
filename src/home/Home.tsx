@@ -20,9 +20,27 @@ function Home() {
 
   const [todos, setTodos] = useState<Todo[]>([])
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all')
-  const [username, setUsername] = useState('')
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [user, setUser] = useState({
+    username: '',
+    email: '',
+    password: ''
+  });
+  // const [username, setUsername] = useState('') ;
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false) ;
 
+
+  const openProfile = async () => {
+  // if (!username) {
+  //   const data = await userData();
+  //   setUsername(data[0].username);
+  // }
+  setUser({
+    username: user.username,
+    email: user.email,
+    password: user.password,
+  });
+  setIsEditModalOpen(true);
+};
   const addTodo = (text: string) => {
     const newTodo: Todo = {
       id: Date.now().toString(),
@@ -57,7 +75,10 @@ function Home() {
   const activeCount = todos.filter(todo => !todo.completed).length
 
   const handleSaveProfile = (newName: string) => {
-    setUsername(newName)
+    setUser({
+      ...user,
+      username: newName
+    });
     setIsEditModalOpen(false)
   }
 // const [initials, setInitials] = useState('');
@@ -66,29 +87,36 @@ function Home() {
       const getData = async () => {
       try {
         const data = await userData();
-        console.log('Fetched user data:', data[0].username);
-        setUsername(data[0].username) ;
+        // console.log('Fetched user data:', data[0].username);
+        setUser({
+          ...user,
+          username: data[0].username,
+          email: data[0].email,
+          password: data[0].password
+        });
 
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
     } 
       getData();
-    },[]) ;
+    },[user]) ;
   return (
     <>
  <main className="min-h-screen bg-background pb-12">
       {/* Profile Edit Modal */}
       <ProfileModalEdit
         isOpen={isEditModalOpen}
-        username={username}
+        username={user.username}
+        email={user.email}
+        password={user.password}
         onSave={handleSaveProfile}
         onClose={() => setIsEditModalOpen(false)}
       />
      <div className="fixed top-4 right-4 z-50">
         <UserProfile
-          username={username}
-          onProfileClick={() => setIsEditModalOpen(true)}
+          username={user.username}
+          onProfileClick={openProfile}
         />
       </div>
 

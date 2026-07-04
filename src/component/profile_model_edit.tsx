@@ -1,9 +1,11 @@
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface ProfileEditModalProps {
   isOpen: boolean
-  username: string
+  username: string,
+  email : string ,
+  password : string ,
   onSave: (newName: string) => void
   onClose: () => void
 }
@@ -11,14 +13,22 @@ interface ProfileEditModalProps {
 export default function ProfileModalEdit({
   isOpen,
   username,
+  email,
+  password,
   onSave,
   onClose,
 }: ProfileEditModalProps) {
-  const [input, setInput] = useState(username)
+  const [input, setInput] = useState({
+    usernames: "",
+    email : "" ,
+    password : "" ,
+  });
+  // console.log('ProfileModalEdit rendered with username:', username);
   const [error, setError] = useState('')
+  // const [edit , setEdit] = useState(username) ;
 
   const handleSave = () => {
-    const trimmedName = input.trim()
+    const trimmedName = input.usernames.trim()
     if (!trimmedName) {
       setError('Name cannot be empty')
       return
@@ -29,11 +39,16 @@ export default function ProfileModalEdit({
     }
     onSave(trimmedName)
     setError('')
-    setInput(username)
+    setInput({ ...input, usernames: trimmedName })
+    setInput({ ...input, email: email })
+    setInput({ ...input, password: password })
+    onClose()
   }
 
   const handleClose = () => {
-    setInput(username)
+    setInput({ ...input, usernames: username })
+    setInput({ ...input, email: email })
+    setInput({ ...input, password: password })
     setError('')
     onClose()
   }
@@ -46,7 +61,21 @@ export default function ProfileModalEdit({
     }
   }
 
-  if (!isOpen) return null
+
+  useEffect(() => {
+  // if (isOpen) {
+    setInput({
+      usernames: username,
+      email: email,
+      password: password,
+    });
+  // }
+}, [isOpen, username, email, password]);
+  if (!isOpen){
+    return null  ;
+  }
+
+  
 
   return (
     <>
@@ -68,9 +97,51 @@ export default function ProfileModalEdit({
           </label>
           <input
             type="text"
-            value={username}
+            value={input.usernames}
             onChange={(e) => {
-              setInput(e.target.value)
+              setInput({ ...input, usernames: e.target.value })
+              setError('')
+            }}
+            onKeyDown={handleKeyDown}
+            placeholder="Enter your name"
+            className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            autoFocus
+          />
+          {error && (
+            <p className="text-sm text-destructive mt-1">{error}</p>
+          )}
+        </div>
+
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-foreground mb-2">
+            Email
+          </label>
+          <input
+            type="text"
+            value={input.email}
+            onChange={(e) => {
+              setInput({ ...input, email: e.target.value })
+              setError('')
+            }}
+            onKeyDown={handleKeyDown}
+            placeholder="Enter your name"
+            className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            autoFocus
+          />
+          {error && (
+            <p className="text-sm text-destructive mt-1">{error}</p>
+          )}
+        </div>
+
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-foreground mb-2">
+            Password
+          </label>
+          <input
+            type="text"
+            value={input.password}
+            onChange={(e) => {
+              setInput({...input,password :e.target.value})
               setError('')
             }}
             onKeyDown={handleKeyDown}
