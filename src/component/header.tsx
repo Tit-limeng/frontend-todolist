@@ -1,7 +1,7 @@
 export default function Header() {
   return (
     <div className="text-center">
-      <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-primary/80 mb-4">
+      <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary  mb-4">
         <svg
           className="w-6 h-6 text-primary-foreground"
           fill="none"

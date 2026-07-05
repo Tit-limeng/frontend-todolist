@@ -5,22 +5,25 @@ import Register from './auth/register/Register'
 import Home from './home/Home';
 import Forgot_Password from './auth/forgot_passwrod/Forgot_Password';
 import NotFound from './Not_Found';
+import ProtectedRoute from './middleware/ProtectedRoute';
 
 function App() {
 
   return (
     <>
-     <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/auth/login" element={<Login />} />
-      <Route path="/auth/forgot-password" element={<Forgot_Password />} />
-      <Route path="/auth/register" element={<Register />} />
-      <Route path="/auth/forgot-password" element={<Forgot_Password />} />
-      <Route path="*" element={<NotFound />}  />
-    </Routes>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/auth/login" element={<Login />} />
+          <Route path="/auth/register" element={<Register />} />
+          <Route path="/auth/forgot-password" element={<Forgot_Password />} />
 
-    </BrowserRouter>
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<Home />} />
+          </Route>
+
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }

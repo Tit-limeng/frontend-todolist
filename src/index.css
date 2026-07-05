@@ -7,26 +7,21 @@ body {
   box-sizing: border-box;
 }
 
+@import "tailwindcss";
+
+
 :root {
-  /* Light Mode - Default */
-  --primary: oklch(0.492 0.244 283.851);        /* Purple */
-  --primary-foreground: oklch(1 0 0);            /* White */
-  --secondary: oklch(0.96 0.01 283);             /* Light purple */
-  --secondary-foreground: oklch(0.492 0.244 283.851); /* Purple */
-  --accent: oklch(0.492 0.244 283.851);          /* Purple (same as primary) */
-  --background: oklch(0.98 0.001 247.858);       /* Very light blue-white */
-  --foreground: oklch(0.18 0.008 281.633);       /* Dark blue */
+  /* --primary: oklch(0.492 0.244 283.851); */
+  --primary : #e65447;
+  --primary-foreground: oklch(1 0 0);
 }
 
 .dark {
-  /* Dark Mode */
-  --primary: oklch(0.65 0.2 283.851);            /* Brighter purple */
-  --primary-foreground: oklch(0.13 0.01 283);    /* Dark blue */
-  --secondary: oklch(0.22 0.01 283);             /* Dark blue-purple */
-  --secondary-foreground: oklch(0.97 0.01 280); /* Light gray */
+  /* --primary: oklch(0.65 0.2 283.851); */
+  --primary : #c45349 ;
+  --primary-foreground: oklch(0.13 0.01 283);
 }
-
-@theme inline {
+/* @theme inline {
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
@@ -34,6 +29,5 @@ body {
   --color-accent: var(--accent);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  /* ... and more */
-}
+} */
 

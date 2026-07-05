@@ -1,9 +1,9 @@
-'use client'
+
 
 import { useState, useRef } from 'react'
 
 interface TodoInputProps {
-  onAdd: (text: string) => void
+  onAdd: (title :string,description: string , status : string , priority : string , due_date : Date) => void
 }
 
 export default function TodoInput({ onAdd }: TodoInputProps) {
@@ -13,7 +13,14 @@ export default function TodoInput({ onAdd }: TodoInputProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (value.trim()) {
-      onAdd(value.trim())
+      // onAdd(value.trim())
+      onAdd(
+    value.trim(),
+    "default description",
+    "pending",
+    "low",
+    new Date()
+  );
       setValue('')
       inputRef.current?.focus()
     }
@@ -28,7 +35,8 @@ export default function TodoInput({ onAdd }: TodoInputProps) {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder="Add a new task..."
-          className="flex-1 rounded-xl border-2 border-border bg-card px-5 py-3 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+          // className="flex-1 rounded-xl border-2 border-border bg-card px-5 py-3 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+          className="flex-1 rounded-xl border-2 border-border bg-card px-5 py-3 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-[#c45349]/20"
         />
         <button
           type="submit"

@@ -1,9 +1,21 @@
-interface Todo {
-  id: string
-  text: string
-  completed: boolean
-  createdAt: Date
-}
+// interface Todo {
+//   todo_id: string
+//   title: string,
+//   description : string ,
+//   status : string ;
+//   priority : string
+//   completed: boolean,
+//   due_date : Date ,
+//   createdAt: Date
+// }
+// "title": "hello kitty",
+//             "description": "test",
+//             "status": "pending",
+//             "priority": "low",
+//             "due_date": "2026-07-19T17:00:00.000Z",
+//             "created_at": "2026-07-05T17:06:50.501Z",
+//             "updated_at": "2026-07-05T17:06:50.501Z"
+import type { Todo } from '../types/task'
 
 interface TodoListProps {
   todos: Todo[]
@@ -20,11 +32,11 @@ export default function TodoList({ todos, onToggle, onDelete }: TodoListProps) {
     <div className="space-y-2">
       {todos.map((todo) => (
         <div
-          key={todo.id}
+          key={todo.todo_id}
           className="group flex items-center gap-3 rounded-xl border-2 border-border bg-card px-4 py-3 transition-all hover:border-primary/30 hover:bg-secondary"
         >
           <button
-            onClick={() => onToggle(todo.id)}
+            onClick={() => onToggle(todo.todo_id)}
             className={`flex-shrink-0 w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${
               todo.completed
                 ? 'bg-primary border-primary'
@@ -55,11 +67,11 @@ export default function TodoList({ todos, onToggle, onDelete }: TodoListProps) {
                 : 'text-foreground'
             }`}
           >
-            {todo.text}
+            {todo.title}
           </span>
 
           <button
-            onClick={() => onDelete(todo.id)}
+            onClick={() => onDelete(todo.todo_id)}
             className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
           >
             <svg
