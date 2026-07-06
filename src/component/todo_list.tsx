@@ -1,20 +1,4 @@
-// interface Todo {
-//   todo_id: string
-//   title: string,
-//   description : string ,
-//   status : string ;
-//   priority : string
-//   completed: boolean,
-//   due_date : Date ,
-//   createdAt: Date
-// }
-// "title": "hello kitty",
-//             "description": "test",
-//             "status": "pending",
-//             "priority": "low",
-//             "due_date": "2026-07-19T17:00:00.000Z",
-//             "created_at": "2026-07-05T17:06:50.501Z",
-//             "updated_at": "2026-07-05T17:06:50.501Z"
+
 import type { Todo } from '../types/task'
 
 interface TodoListProps {

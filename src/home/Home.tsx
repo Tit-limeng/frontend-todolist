@@ -6,7 +6,7 @@ import TodoInput from '../component/input_box'
 import TodoStats from '../component/state'
 import TodoList from '../component/todo_list'
 import { useEffect, useState } from 'react'
-import { userData, getUserTaskList } from '../api/api'
+import { userData, getUserTaskList, remoteTask } from '../api/api'
 import type { Todo } from '../types/task'
 
 
@@ -72,9 +72,24 @@ function Home() {
     ))
   }
 
-  const deleteTodo = (id: string) => {
-    setTodos(todos.filter(todo => todo.todo_id !== id))
+  // const deleteTodo = async () => {
+  //   // setTodos(todos.filter(todo => todo.todo_id !== id))
+  //   const todo_id = todos.find(todo => todo.todo_id);
+  //   console.log('this is todo id :',todo_id) ;
+  //   // const remote = await remoteTask(id) ;
+  // }
+
+  const deleteTodo = async (todo_id: string) => {
+  try {
+    const response = await remoteTask(todo_id);
+
+    console.log(response);
+    // Remove it from the UI after the API succeeds
+    setTodos(prev => prev.filter(todo => todo.todo_id !== todo_id));
+  } catch (error) {
+    console.error(error);
   }
+};
 
   const clearCompleted = () => {
     setTodos(todos.filter(todo => !todo.completed))
@@ -102,6 +117,8 @@ function Home() {
   // const handleLogout = () => {
   //   console.log('Logout clicked');
   // }
+
+
 
   useEffect(() => {
     const getData = async () => {

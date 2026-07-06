@@ -39,8 +39,8 @@ export default function ForgotPasswordPage() {
     setFormData(prev => ({
       ...prev,
       [name]: value,
-    }))
-    // Clear error when user starts typing
+    })) ;
+    
     if (errors.email) {
       setErrors(prev => ({
         ...prev,

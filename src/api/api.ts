@@ -46,3 +46,14 @@ export const getUserTaskList = async () => {
     throw error;
   }
 }
+
+export const remoteTask = async (todo_id : string) => {
+  try {
+    const response = await api.delete(`/user/task/deleteTask/${todo_id}`,{
+      withCredentials : true ,
+    }) ;
+    if ( response ) return response.data ;
+  } catch (error) {
+    console.error('Can not remove this task , Please try again !' , error) ;
+  }
+}
