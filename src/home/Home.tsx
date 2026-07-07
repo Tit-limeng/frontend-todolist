@@ -6,22 +6,15 @@ import TodoInput from '../component/input_box'
 import TodoStats from '../component/state'
 import TodoList from '../component/todo_list'
 import { useEffect, useState } from 'react'
-import { userData, getUserTaskList, remoteTask } from '../api/api'
+import { userData, getUserTaskList, remoteTask ,api } from '../api/api'
 import type { Todo } from '../types/task'
 
-
-
-// interface Todo {
-//   id: string
-//   text: string
-//   completed: boolean
-//   createdAt: Date
-// }
 function Home() {
 
   const [todos, setTodos] = useState<Todo[]>([]);
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all')
   const [user, setUser] = useState({
+    user_id : "" ,
     username: '',
     email: '',
     password: ''
@@ -38,6 +31,7 @@ function Home() {
     //   setUsername(data[0].username);
     // }
     setUser({
+      user_id : user.user_id ,
       username: user.username,
       email: user.email,
       password: user.password,
@@ -54,14 +48,6 @@ function Home() {
       completed: false,
       due_date ,
       createdAt: new Date(),
-  //     todo_id: string
-  // title: string,
-  // description : string ,
-  // status : string ;
-  // priority : string
-  // completed: boolean,
-  // due_date : Date ,
-  // createdAt: Date
     }
     setTodos([newTodo, ...todos])
   }
@@ -72,19 +58,11 @@ function Home() {
     ))
   }
 
-  // const deleteTodo = async () => {
-  //   // setTodos(todos.filter(todo => todo.todo_id !== id))
-  //   const todo_id = todos.find(todo => todo.todo_id);
-  //   console.log('this is todo id :',todo_id) ;
-  //   // const remote = await remoteTask(id) ;
-  // }
-
   const deleteTodo = async (todo_id: string) => {
   try {
-    const response = await remoteTask(todo_id);
+    await remoteTask(todo_id);
 
-    console.log(response);
-    // Remove it from the UI after the API succeeds
+    // console.log(response);
     setTodos(prev => prev.filter(todo => todo.todo_id !== todo_id));
   } catch (error) {
     console.error(error);
@@ -104,29 +82,66 @@ function Home() {
   const completedCount = todos.filter(todo => todo.completed).length
   const activeCount = todos.filter(todo => !todo.completed).length
 
-  const handleSaveProfile = (newName: string) => {
-    setUser({
-      ...user,
-      username: newName
-    });
-    setIsEditModalOpen(false)
-  }
-  // const [initials, setInitials] = useState('');
-
-
-  // const handleLogout = () => {
-  //   console.log('Logout clicked');
+  // const handleSaveProfile = async () => {
+  //   // setUser({
+  //   //   ...user,
+  //   //   username: newName
+  //   // });
+  //   const user_id = user.user_id ;
+  //   console.log(user_id) ;
+  //   const response = await api.patch(`/user/edit/${user_id}`,{username : user.username , password : user.password}) ;
+  //   if ( response ) 
+  //   setUser(response.data) ;
+  //   console.log(response.data) ;
+  //   setIsEditModalOpen(false)
   // }
 
+//   const handleSaveProfile = async (username: string, password: string) => {
+//   try {
+//     const response = await api.patch(`/user/edit/${user.user_id}`, {
+//       username,
+//       password,
+//     });
 
+//     setUser((prev) => ({
+//       ...prev,
+//       username,
+//       password,
+//     }));
 
+//     console.log("this is response before update user" , response.data) ;
+
+//     setIsEditModalOpen(false);
+//   } catch (error) {
+//     console.error("Failed to update profile:", error);
+//   }
+// };
+
+const handleSaveProfile = async (username: string, password: string) => {
+  try {
+    const response = await api.patch(`/user/edit/${user.user_id}`, {
+      username,
+      password,
+    });
+    setUser((prev) => ({
+      ...prev,
+      username,
+      password,
+    }));
+
+    setIsEditModalOpen(false);
+  } catch (error) {
+    console.error("Update failed:", error);
+  }
+};
   useEffect(() => {
     const getData = async () => {
       try {
         const data = await userData();
-        // console.log('Fetched user data:', data[0].username);
+        console.log('Fetched user data:', data[0]);
         setUser({
           ...user,
+          user_id : data[0].user_id ,
           username: data[0].username,
           email: data[0].email,
           password: data[0].password
@@ -140,7 +155,7 @@ function Home() {
     const getTaskList = async () => {
       const data = await getUserTaskList();
       setTodos(data);
-      console.log(data) ;
+      // console.log(data) ;
     }
     getData();
     getTaskList();
@@ -152,7 +167,6 @@ function Home() {
         <ProfileModalEdit
           isOpen={isEditModalOpen}
           username={user.username}
-          email={user.email}
           password={user.password}
           onSave={handleSaveProfile}
           onClose={() => setIsEditModalOpen(false)}

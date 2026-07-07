@@ -62,7 +62,6 @@ export default function RegisterPage() {
       ...prev,
       [name]: value,
     }))
-    // Clear error for this field when user starts typing
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({
         ...prev,

@@ -4,23 +4,20 @@ import { useEffect, useState } from 'react'
 interface ProfileEditModalProps {
   isOpen: boolean
   username: string,
-  email : string ,
   password : string ,
-  onSave: (newName: string) => void
+  onSave: (newName: string, newPassword: string) => void
   onClose: () => void
 }
 
 export default function ProfileModalEdit({
   isOpen,
   username,
-  email,
   password,
   onSave,
   onClose,
 }: ProfileEditModalProps) {
   const [input, setInput] = useState({
     usernames: "",
-    email : "" ,
     password : "" ,
   });
   // console.log('ProfileModalEdit rendered with username:', username);
@@ -28,7 +25,8 @@ export default function ProfileModalEdit({
   // const [edit , setEdit] = useState(username) ;
 
   const handleSave = () => {
-    const trimmedName = input.usernames.trim()
+    const trimmedName = input.usernames.trim();
+    const trimmedPassword = input.password.trim();
     if (!trimmedName) {
       setError('Name cannot be empty')
       return
@@ -37,17 +35,24 @@ export default function ProfileModalEdit({
       setError('Name must be at least 2 characters')
       return
     }
-    onSave(trimmedName)
+
+    if (!trimmedPassword) {
+      setError('Password cannot be empty')
+      return
+    }
+    if (trimmedPassword.length < 8) {
+      setError('Password must be at least 8 characters')
+      return
+    }
+    onSave(trimmedName , trimmedPassword)
     setError('')
     setInput({ ...input, usernames: trimmedName })
-    setInput({ ...input, email: email })
     setInput({ ...input, password: password })
     onClose()
   }
 
   const handleClose = () => {
     setInput({ ...input, usernames: username })
-    setInput({ ...input, email: email })
     setInput({ ...input, password: password })
     setError('')
     onClose()
@@ -66,11 +71,10 @@ export default function ProfileModalEdit({
   // if (isOpen) {
     setInput({
       usernames: username,
-      email: email,
       password: password,
     });
   // }
-}, [isOpen, username, email, password]);
+}, [isOpen, username, password]);
   if (!isOpen){
     return null  ;
   }
@@ -100,27 +104,6 @@ export default function ProfileModalEdit({
             value={input.usernames}
             onChange={(e) => {
               setInput({ ...input, usernames: e.target.value })
-              setError('')
-            }}
-            onKeyDown={handleKeyDown}
-            placeholder="Enter your name"
-            className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            autoFocus
-          />
-          {error && (
-            <p className="text-sm text-destructive mt-1">{error}</p>
-          )}
-        </div>
-
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-foreground mb-2">
-            Email
-          </label>
-          <input
-            type="text"
-            value={input.email}
-            onChange={(e) => {
-              setInput({ ...input, email: e.target.value })
               setError('')
             }}
             onKeyDown={handleKeyDown}

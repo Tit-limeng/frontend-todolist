@@ -12,13 +12,23 @@ body {
 
 :root {
   /* --primary: oklch(0.492 0.244 283.851); */
-  --primary : #e65447;
+  /* --primary : #e65447; */
+  /* --primary : #BFE3B4 ; */
+  /* --primary : #C1E1C1; */
+  /* --primary : #BBB791 ; */
+  /* --primary : #6fc276; */
+  --primary : #f11946 ;
   --primary-foreground: oklch(1 0 0);
 }
 
 .dark {
   /* --primary: oklch(0.65 0.2 283.851); */
-  --primary : #c45349 ;
+  /* --primary : #c45349 ; */
+  /* --primary : #BFE3B4 ; */
+  /* --primary : #C1E1C1; */
+  /* --primary : #BBB791 ; */
+  /* --primary : #6fc276 ; */
+  --primary : #f11946 ;
   --primary-foreground: oklch(0.13 0.01 283);
 }
 /* @theme inline {

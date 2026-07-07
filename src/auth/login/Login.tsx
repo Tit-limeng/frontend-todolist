@@ -1,4 +1,3 @@
-'use client'
 
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
@@ -6,6 +5,11 @@ import AuthLayout from '../../component/auth_layout'
 import FormInput from '../../component/form_input'
 import { api, userData } from '../../api/api';
 import type { User } from '../../types/user';
+import { useRef } from "react";
+// import LoadingBar, { LoadingBarRef } from "react-top-loading-bar";
+import LoadingBar from "react-top-loading-bar";
+import type { LoadingBarRef } from "react-top-loading-bar";
+import { useNavigate } from 'react-router-dom' ;
 
 interface FormData {
     email: string
@@ -19,8 +23,10 @@ interface FormErrors {
 }
 
 export default function LoginPage() {
-    const cookie = document.cookie;
+    const navigate = useNavigate() ;
+    // const cookie = document.cookie;
     const [data, setData] = useState<User[]>([]);
+    const loadingBarRef = useRef<LoadingBarRef>(null);
 
     const [formData, setFormData] = useState<FormData>({
         email: '',
@@ -55,7 +61,6 @@ export default function LoginPage() {
             ...prev,
             [name]: value,
         }))
-        // Clear error for this field when user starts typing
         if (errors[name as keyof FormErrors]) {
             setErrors(prev => ({
                 ...prev,
@@ -71,26 +76,30 @@ export default function LoginPage() {
             return
         }
 
+
         setIsLoading(true)
+        loadingBarRef.current?.continuousStart() ;
         try {
             await new Promise(resolve => setTimeout(resolve, 1500))
             console.log('[v0] Login successful:', formData.email);
             setErrors({ submit: 'Login successful! Redirecting...' });
-            const login = await api.post('/user/login', formData, {
+            await api.post('/user/login', formData, {
                 withCredentials: true,
             });
             getData();
             // const user = await userData();
             // console.log('User data fetched:', user);
             // setData(user);
-            console.log('Login response:', login.data);
+            // console.log('Login response:', login.data);
+            navigate('/') ;
         } catch (error) {
             setErrors({
                 submit: 'Login failed. Please try again.',
             });
             console.error('Login error:', error);
         } finally {
-            setIsLoading(false)
+            setIsLoading(false) ;
+            loadingBarRef.current?.complete();
         }
     }
 
@@ -112,6 +121,13 @@ export default function LoginPage() {
         getData();
     }, []);
     return (
+        <>
+        <LoadingBar
+        color="#6fc276"
+        ref={loadingBarRef}
+        height={4}
+        shadow={true}
+      />
         <AuthLayout
             title="Welcome back"
             description="Sign in to your account to continue"
@@ -187,7 +203,7 @@ export default function LoginPage() {
                     </div>
                 )}
 
-                <h1 className='text-green-600'>this is cookie : {cookie}</h1>
+                {/* <h1 className='text-green-600'>this is cookie : {cookie}</h1> */}
                 <div>
                     {data.map((user, index) => (
                         <div key={index} className="p-4 mb-2 border rounded-lg bg-card">
@@ -226,5 +242,6 @@ export default function LoginPage() {
                 </p>
             </form>
         </AuthLayout>
+        </>
     )
 }
