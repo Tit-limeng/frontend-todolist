@@ -1,10 +1,11 @@
 
-import { useState } from 'react'
-import {Link} from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import AuthLayout from '../../component/auth_layout'
 import FormInput from '../../component/form_input'
 import OTPInput from '../../component/otp_input'
 import ResetPasswordForm from '../../component/reset-password-form'
+import { api } from '../../api/api'
 
 type Step = 'email' | 'otp' | 'reset-password' | 'success'
 
@@ -21,10 +22,13 @@ interface FormErrors {
   submit?: string
 }
 
-const MOCK_OTP = '123456'
-
 export default function ForgotPasswordPage() {
-  const [step, setStep] = useState<Step>('email')
+  const [step, setStep] = useState<Step>('email');
+  const router = useNavigate();
+  const [param] = useSearchParams();
+  const email = param.get('email');
+  const id = param.get('id');
+
   const [formData, setFormData] = useState<FormData>({
     email: '',
     otp: '',
@@ -46,7 +50,6 @@ export default function ForgotPasswordPage() {
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
-
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -56,11 +59,19 @@ export default function ForgotPasswordPage() {
 
     setIsLoading(true)
     try {
-      // Simulate sending OTP
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      setStep('otp')
-      setErrors({})
-    } catch (error) {
+      const response = await api.post(`/user/forgot-password`, {
+        email: formData.email
+      });
+
+      if (response.data) {
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        router(`/auth/forgot-password?email=${encodeURIComponent(formData.email)}`, { replace: true });
+        console.log(response.data);
+        // setFormData(response.data) ;
+        setStep('otp')
+        setErrors({})
+      }
+    } catch {
       setErrors({
         submit: 'Failed to send OTP. Please try again.',
       })
@@ -70,7 +81,7 @@ export default function ForgotPasswordPage() {
   }
 
   const handleOTPVerify = async () => {
-    if (formData.otp !== MOCK_OTP) {
+    if (!formData.otp) {
       setErrors({
         otp: 'Invalid OTP. Try 123456 for demo.',
       })
@@ -79,13 +90,27 @@ export default function ForgotPasswordPage() {
 
     setIsLoading(true)
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      setStep('reset-password')
-      setErrors({})
+      const response = await api.post(`/user/forgot-password/verify/`, {
+        email: formData.email,
+        otp: formData.otp
+      });
+
+      if (response.data) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        console.log(response.data.data);
+
+        if (response.data.data.user_id != null) {
+          setStep('reset-password');
+          router(`/auth/forgot-password?email=${encodeURIComponent(formData.email)}&id=${response.data.data.user_id}`, { replace: true });
+        }
+        setErrors({})
+
+      }
     } catch (error) {
       setErrors({
         submit: 'Failed to verify OTP. Please try again.',
-      })
+      });
+      console.log(error);
     } finally {
       setIsLoading(false)
     }
@@ -101,7 +126,8 @@ export default function ForgotPasswordPage() {
     } catch (error) {
       setErrors({
         submit: 'Failed to reset password. Please try again.',
-      })
+      });
+      console.log(error);
     } finally {
       setIsLoading(false)
     }
@@ -113,7 +139,7 @@ export default function ForgotPasswordPage() {
       ...prev,
       [name]: value,
     }))
-    // Clear error when user starts typing
+
     if (errors.email) {
       setErrors(prev => ({
         ...prev,
@@ -122,30 +148,37 @@ export default function ForgotPasswordPage() {
     }
   }
 
+  useEffect(() => {
+    if (email != null && id != null) {
+      setStep('reset-password');
+      setErrors({})
+    }
+
+  }, [email, id]);
+
   return (
     <AuthLayout
       title={
         step === 'email' ? 'Reset password' :
-        step === 'otp' ? 'Verify OTP' :
-        step === 'reset-password' ? 'Create new password' :
-        'Password reset complete'
+          step === 'otp' ? 'Verify OTP' :
+            step === 'reset-password' ? 'Create new password' :
+              'Password reset complete'
       }
       description={
         step === 'email' ? 'Enter your email to receive an OTP' :
-        step === 'otp' ? 'Enter the 6-digit code sent to your email' :
-        step === 'reset-password' ? 'Create a strong new password' :
-        'Your password has been reset successfully'
+          step === 'otp' ? 'Enter the 6-digit code sent to your email' :
+            step === 'reset-password' ? 'Create a strong new password' :
+              'Your password has been reset successfully'
       }
     >
       <div className="flex gap-2 mb-8">
         {(['email', 'otp', 'reset-password', 'success'] as const).map((s, index) => (
           <div
             key={s}
-            className={`h-1 flex-1 rounded-full transition-all ${
-              ['email', 'otp', 'reset-password', 'success'].indexOf(step) >= index
+            className={`h-1 flex-1 rounded-full transition-all ${['email', 'otp', 'reset-password', 'success'].indexOf(step) >= index
                 ? 'bg-primary'
                 : 'bg-muted'
-            }`}
+              }`}
           />
         ))}
       </div>
@@ -251,11 +284,11 @@ export default function ForgotPasswordPage() {
             Back to email
           </button>
 
-          <div className="p-3 rounded-lg bg-secondary/50">
+          {/* <div className="p-3 rounded-lg bg-secondary/50">
             <p className="text-xs text-muted-foreground text-center">
               <strong>Demo:</strong> Use OTP <span className="font-mono">123456</span>
             </p>
-          </div>
+          </div> */}
         </div>
       )}
 
