@@ -16,10 +16,18 @@ interface FormData {
   confirmPassword: string
 }
 
+// interface FormErrors {
+//   email?: string
+//   otp?: string
+//   submit?: string
+// }
+
 interface FormErrors {
-  email?: string
-  otp?: string
-  submit?: string
+  // otp : 
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+  submit?: string;
 }
 
 export default function ForgotPasswordPage() {
@@ -81,12 +89,12 @@ export default function ForgotPasswordPage() {
   }
 
   const handleOTPVerify = async () => {
-    if (!formData.otp) {
-      setErrors({
-        otp: 'Invalid OTP. Try 123456 for demo.',
-      })
-      return
-    }
+    // if (!formData.otp) {
+    //   setErrors({
+    //     otp: 'Invalid OTP. Try 123456 for demo.',
+    //   })
+    //   return
+    // }
 
     setIsLoading(true)
     try {
@@ -116,23 +124,49 @@ export default function ForgotPasswordPage() {
     }
   }
 
-  const handleResetPassword = async (password: string, confirmPassword: string) => {
-    setIsLoading(true)
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      console.log('[v0] Password reset successfully for:', formData.email)
-      setStep('success')
-      setErrors({})
-    } catch (error) {
-      setErrors({
-        submit: 'Failed to reset password. Please try again.',
-      });
-      console.log(error);
-    } finally {
-      setIsLoading(false)
-    }
+  const handleResetPassword = async (
+  password: string,
+  confirmPassword: string
+) => {
+  if (password !== confirmPassword) {
+    setErrors({
+      confirmPassword: "Passwords do not match",
+    });
+    return;
   }
 
+  setIsLoading(true);
+
+  try {
+    console.log("this is user id :" , id ,email) ;
+    const response = await api.patch(
+      `/user/forgot-password/updatePassword/${id}`,
+      {
+        password,
+        email ,
+      }
+    );
+
+    if (response.data) {
+      setErrors({});
+      setStep("success");
+      console.log('this is data response : ',response.data) ;
+    } else {
+      setErrors({
+        submit: response.data,
+      });
+    }
+  } catch (error : any) {
+    setErrors({
+      submit:
+        error?.response?.data?.message ||
+        "Failed to reset password.",
+    });
+    console.log(error) ;
+  } finally {
+    setIsLoading(false);
+  }
+};
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({
@@ -152,6 +186,8 @@ export default function ForgotPasswordPage() {
     if (email != null && id != null) {
       setStep('reset-password');
       setErrors({})
+    } else if ( email != null  ) {
+      setStep('otp') ;
     }
 
   }, [email, id]);
@@ -245,7 +281,7 @@ export default function ForgotPasswordPage() {
             onChange={(otp) => {
               setFormData(prev => ({ ...prev, otp }))
               if (errors.otp) setErrors(prev => ({ ...prev, otp: undefined }))
-            }}
+            }} 
             length={6}
             error={errors.otp}
             isLoading={isLoading}
@@ -295,7 +331,7 @@ export default function ForgotPasswordPage() {
       {/* Step 3: Reset Password */}
       {step === 'reset-password' && (
         <ResetPasswordForm
-          email={formData.email}
+          email={email}
           isLoading={isLoading}
           onSubmit={handleResetPassword}
           onBack={() => {
