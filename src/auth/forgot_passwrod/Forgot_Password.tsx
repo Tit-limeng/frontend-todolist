@@ -23,7 +23,7 @@ interface FormData {
 // }
 
 interface FormErrors {
-  // otp : 
+  otp?: string;
   email?: string;
   password?: string;
   confirmPassword?: string;
@@ -88,6 +88,31 @@ export default function ForgotPasswordPage() {
     }
   }
 
+
+  const resendOtp = async () => {
+
+    setIsLoading(true)
+    try {
+      const response = await api.post(`/user/forgot-password`, {
+        email: email
+      });
+
+      if (response.data) {
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        // router(`/auth/forgot-password?email=${encodeURIComponent(formData.email)}`, { replace: true });
+        console.log(response.data);
+        // setFormData(response.data) ;
+        setStep('otp')
+        setErrors({})
+      }
+    } catch {
+      setErrors({
+        submit: 'Failed to send OTP. Please try again.',
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
   const handleOTPVerify = async () => {
     // if (!formData.otp) {
     //   setErrors({
@@ -156,13 +181,13 @@ export default function ForgotPasswordPage() {
         submit: response.data,
       });
     }
-  } catch (error : any) {
+  } catch {
     setErrors({
       submit:
-        error?.response?.data?.message ||
+        // error?.response?.data?.message ||
         "Failed to reset password.",
     });
-    console.log(error) ;
+    // console.log(error) ;
   } finally {
     setIsLoading(false);
   }
@@ -285,6 +310,7 @@ export default function ForgotPasswordPage() {
             length={6}
             error={errors.otp}
             isLoading={isLoading}
+            onclick={resendOtp}
           />
 
           {errors.submit && (

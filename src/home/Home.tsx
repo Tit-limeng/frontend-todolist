@@ -6,7 +6,7 @@ import TodoInput from '../component/input_box'
 import TodoStats from '../component/state'
 import TodoList from '../component/todo_list'
 import { useEffect, useState } from 'react'
-import { userData, getUserTaskList, remoteTask ,api } from '../api/api'
+import { userData, getUserTaskList, remoteTask, api } from '../api/api'
 import type { Todo } from '../types/task'
 
 function Home() {
@@ -14,7 +14,7 @@ function Home() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all')
   const [user, setUser] = useState({
-    user_id : "" ,
+    user_id: "",
     username: '',
     email: '',
     password: ''
@@ -23,30 +23,28 @@ function Home() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
 
-
-
   const openProfile = async () => {
     // if (!username) {
     //   const data = await userData();
     //   setUsername(data[0].username);
     // }
     setUser({
-      user_id : user.user_id ,
+      user_id: user.user_id,
       username: user.username,
       email: user.email,
       password: user.password,
     });
     setIsEditModalOpen(true);
   };
-  const addTodo = (title :string,description: string , status : string , priority : string , due_date : Date) => {
+  const addTodo = (title: string, description: string, status: string, priority: string, due_date: Date) => {
     const newTodo: Todo = {
       todo_id: Date.now().toString(),
-      title  ,
+      title,
       description,
-      status ,
-      priority ,
+      status,
+      priority,
       completed: false,
-      due_date ,
+      due_date,
       createdAt: new Date(),
     }
     setTodos([newTodo, ...todos])
@@ -59,15 +57,15 @@ function Home() {
   }
 
   const deleteTodo = async (todo_id: string) => {
-  try {
-    await remoteTask(todo_id);
+    try {
+      await remoteTask(todo_id);
 
-    // console.log(response);
-    setTodos(prev => prev.filter(todo => todo.todo_id !== todo_id));
-  } catch (error) {
-    console.error(error);
-  }
-};
+      // console.log(response);
+      setTodos(prev => prev.filter(todo => todo.todo_id !== todo_id));
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const clearCompleted = () => {
     setTodos(todos.filter(todo => !todo.completed))
@@ -82,58 +80,25 @@ function Home() {
   const completedCount = todos.filter(todo => todo.completed).length
   const activeCount = todos.filter(todo => !todo.completed).length
 
-  // const handleSaveProfile = async () => {
-  //   // setUser({
-  //   //   ...user,
-  //   //   username: newName
-  //   // });
-  //   const user_id = user.user_id ;
-  //   console.log(user_id) ;
-  //   const response = await api.patch(`/user/edit/${user_id}`,{username : user.username , password : user.password}) ;
-  //   if ( response ) 
-  //   setUser(response.data) ;
-  //   console.log(response.data) ;
-  //   setIsEditModalOpen(false)
-  // }
-
-//   const handleSaveProfile = async (username: string, password: string) => {
-//   try {
-//     const response = await api.patch(`/user/edit/${user.user_id}`, {
-//       username,
-//       password,
-//     });
-
-//     setUser((prev) => ({
-//       ...prev,
-//       username,
-//       password,
-//     }));
-
-//     console.log("this is response before update user" , response.data) ;
-
-//     setIsEditModalOpen(false);
-//   } catch (error) {
-//     console.error("Failed to update profile:", error);
-//   }
-// };
-
-const handleSaveProfile = async (username: string, password: string) => {
-  try {
-    const response = await api.patch(`/user/edit/${user.user_id}`, {
-      username,
-      password,
-    });
-    setUser((prev) => ({
-      ...prev,
-      username,
-      password,
-    }));
-
-    setIsEditModalOpen(false);
-  } catch (error) {
-    console.error("Update failed:", error);
-  }
-};
+  const handleSaveProfile = async (username: string) => {
+    try {
+      const response = await api.patch(`/user/edit/${user.user_id}`, {
+        username,
+        // password,
+      });
+      if (response.data) {
+        setUser((prev) => ({
+          ...prev,
+          username,
+          // password,
+        }));
+        console.log()
+        setIsEditModalOpen(false);
+      }
+    } catch (error) {
+      console.error("Update failed:", error);
+    }
+  };
   useEffect(() => {
     const getData = async () => {
       try {
@@ -141,7 +106,7 @@ const handleSaveProfile = async (username: string, password: string) => {
         console.log('Fetched user data:', data[0]);
         setUser({
           ...user,
-          user_id : data[0].user_id ,
+          user_id: data[0].user_id,
           username: data[0].username,
           email: data[0].email,
           password: data[0].password
@@ -199,8 +164,8 @@ const handleSaveProfile = async (username: string, password: string) => {
             <button
               onClick={() => setFilter('all')}
               className={`rounded-lg px-4 py-2 font-medium transition-all ${filter === 'all'
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-secondary text-secondary-foreground hover:bg-muted'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-secondary text-secondary-foreground hover:bg-muted'
                 }`}
             >
               All
@@ -208,8 +173,8 @@ const handleSaveProfile = async (username: string, password: string) => {
             <button
               onClick={() => setFilter('active')}
               className={`rounded-lg px-4 py-2 font-medium transition-all ${filter === 'active'
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-secondary text-secondary-foreground hover:bg-muted'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-secondary text-secondary-foreground hover:bg-muted'
                 }`}
             >
               Active
@@ -217,8 +182,8 @@ const handleSaveProfile = async (username: string, password: string) => {
             <button
               onClick={() => setFilter('completed')}
               className={`rounded-lg px-4 py-2 font-medium transition-all ${filter === 'completed'
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-secondary text-secondary-foreground hover:bg-muted'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-secondary text-secondary-foreground hover:bg-muted'
                 }`}
             >
               Completed

@@ -6,7 +6,8 @@ interface OTPInputProps {
   onChange: (value: string) => void
   length?: number
   isLoading?: boolean
-  error?: string
+  error?: string,
+  onclick : ()=> void ,
 }
 
 export default function OTPInput({
@@ -15,6 +16,7 @@ export default function OTPInput({
   length = 6,
   isLoading = false,
   error,
+  onclick ,
 }: OTPInputProps) {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
@@ -104,6 +106,9 @@ export default function OTPInput({
       <p className="text-sm text-muted-foreground text-center">
         We&apos;ve sent a 6-digit code to your email
       </p>
+      <div className='flex justify-end items-center p-0'>
+        <button onClick={onclick}>resend</button>
+      </div>
     </div>
   )
 }

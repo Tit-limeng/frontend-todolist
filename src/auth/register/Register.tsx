@@ -1,33 +1,46 @@
-'use client'
-
-import { useState } from 'react'
-import {Link} from 'react-router-dom'
+import { useState ,useEffect } from 'react'
+import {Link, useNavigate} from 'react-router-dom'
 import AuthLayout from '../../component/auth_layout'
 import FormInput from '../../component/form_input'
-import { api } from '../../api/api'
+import { api } from '../../api/api';
+import OTPInput from '../../component/otp_input'
+
+
 
 interface FormData {
+  otp : string ,
   username: string
   email: string
   password: string
 }
 
 interface FormErrors {
+  otp?: string ,
   username?: string
   email?: string
   password?: string
   submit?: string
 }
 
+type OtpStep = ''|'otpStep' ; 
+
 export default function RegisterPage() {
   const [formData, setFormData] = useState<FormData>({
+    otp : '' ,
     username: '',
     email: '',
     password: '',
   }) ;
+  
+  const [step , setStep ] = useState<OtpStep>('') ;
   const [errors, setErrors] = useState<FormErrors>({})
   const [isLoading, setIsLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
+  const emails =sessionStorage.getItem('email')
+  const router = useNavigate();
+
+  // const [params] = useSearchParams();
+  
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {}
@@ -70,6 +83,54 @@ export default function RegisterPage() {
     }
   }
 
+
+  // test 
+
+//    const handleResetPassword = async (
+//   password: string,
+//   confirmPassword: string
+// ) => {
+//   if (password !== confirmPassword) {
+//     setErrors({
+//       confirmPassword: "Passwords do not match",
+//     });
+//     return;
+//   }
+
+//   setIsLoading(true);
+
+//   try {
+//     console.log("this is user id :" , id ,email) ;
+//     const response = await api.patch(
+//       `/user/forgot-password/updatePassword/${id}`,
+//       {
+//         password,
+//         email ,
+//       }
+//     );
+
+//     if (response.data) {
+//       setErrors({});
+//       setStep("success");
+//       console.log('this is data response : ',response.data) ;
+//     } else {
+//       setErrors({
+//         submit: response.data,
+//       });
+//     }
+//   } catch (error : any) {
+//     setErrors({
+//       submit:
+//         error?.response?.data?.message ||
+//         "Failed to reset password.",
+//     });
+//     console.log(error) ;
+//   } finally {
+//     setIsLoading(false);
+//   }
+// };
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -84,6 +145,12 @@ export default function RegisterPage() {
       if (response.status === 201) {
       console.log('[v0] Registration successful:', response.data); ;
       setErrors({ submit: 'Registration successful! Redirecting...' }) ;
+      const email = formData.email ;
+ 
+      if (email) {
+        sessionStorage.setItem("email", email);
+      }
+      setStep('otpStep') ;
     }
     } catch (error) {
       setErrors({
@@ -95,11 +162,116 @@ export default function RegisterPage() {
     }
   }
 
+   const handleOTPVerify = async () => {
+    // if (!formData.otp) {
+    //   setErrors({
+    //     otp: 'Invalid OTP. Try 123456 for demo.',
+    //   })
+    //   return
+    // }
+
+    setIsLoading(true)
+    try {
+      const response = await api.post(`/user/forgot-password/verify/`, {
+        email: emails,
+        otp: formData.otp
+      });
+
+      if (response.data) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        console.log(response.data.data); 
+        router('/auth/login', {replace : true}) ;
+
+        // if (response.data.data.user_id != null) {
+        //   setStep('reset-password');
+        //   router(`/auth/forgot-password?email=${encodeURIComponent(formData.email)}&id=${response.data.data.user_id}`, { replace: true });
+        // }
+        setErrors({})
+
+      }
+    } catch (error) {
+      setErrors({
+        submit: 'Failed to verify OTP. Please try again.',
+      });
+      console.log(error);
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const resendOtp = async () => {
+    try {
+      const response = await api.post(`/user/forgot-password`,{
+        email : emails
+      }) ;
+
+      if ( response.data ) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        console.log(response.data) ;
+
+      }
+    } catch  {
+      setErrors({
+        submit : 'Failed to send Otp , Please try again.' ,
+      }) ;
+    }
+  }
+
+  useEffect(()=>{
+    if (emails != null) 
+      return setStep('otpStep');
+  } ,[emails])
+
+// test
+//     const handleResetPassword = async (
+//   password: string,
+//   confirmPassword: string
+// ) => {
+//   if (password !== confirmPassword) {
+//     setErrors({
+//       confirmPassword: "Passwords do not match",
+//     });
+//     return;
+//   }
+
+//   setIsLoading(true);
+
+//   try {
+//     console.log("this is user id :" , id ,email) ;
+//     const response = await api.patch(
+//       `/user/forgot-password/updatePassword/${id}`,
+//       {
+//         password,
+//         email ,
+//       }
+//     );
+
+//     if (response.data) {
+//       setErrors({});
+//       // setStep("success");
+//       console.log('this is data response : ',response.data) ;
+//     } else {
+//       setErrors({
+//         submit: response.data,
+//       });
+//     }
+//   } catch (error : any) {
+//     setErrors({
+//       submit:
+//         error?.response?.data?.message ||
+//         "Failed to reset password.",
+//     });
+//     console.log(error) ;
+//   } finally {
+//     setIsLoading(false);
+//   }
+// };
   return (
     <AuthLayout
       title="Create account"
       description="Sign up to get started with TaskFlow"
     >
+      { step === '' &&  (
       <form onSubmit={handleSubmit} className="space-y-6">
         <FormInput
           id="username"
@@ -207,6 +379,63 @@ export default function RegisterPage() {
           </Link>
         </p>
       </form>
+
+      )}
+
+    {step === 'otpStep' && (
+        <div className="space-y-6">
+          <OTPInput
+            value={formData.otp}
+            onChange={(otp) => {
+              setFormData(prev => ({ ...prev, otp }))
+              if (errors.otp) setErrors(prev => ({ ...prev, otp: undefined }))
+            }} 
+            length={6}
+            error={errors.otp}
+            isLoading={isLoading}
+            onclick={resendOtp}
+          />
+
+          {errors.submit && (
+            <div className="p-4 rounded-lg bg-destructive/10 text-destructive border border-destructive/20 text-sm">
+              {errors.submit}
+            </div>
+          )}
+
+          <button
+            onClick={handleOTPVerify}
+            disabled={isLoading || formData.otp.length !== 6}
+            className="w-full px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            {isLoading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+                Verifying...
+              </>
+            ) : (
+              'Verify OTP'
+            )}
+          </button>
+
+          <button
+            onClick={() => {
+              // setStep('email')
+              setFormData(prev => ({ ...prev, otp: '' }))
+              setErrors({})
+            }}
+            disabled={isLoading}
+            className="w-full text-muted-foreground hover:text-foreground text-sm font-medium py-2 transition-colors disabled:opacity-50"
+          >
+            Back to email
+          </button>
+
+          {/* <div className="p-3 rounded-lg bg-secondary/50">
+            <p className="text-xs text-muted-foreground text-center">
+              <strong>Demo:</strong> Use OTP <span className="font-mono">123456</span>
+            </p>
+          </div> */}
+        </div>
+      )}
     </AuthLayout>
   )
 }

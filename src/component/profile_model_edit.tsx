@@ -5,20 +5,20 @@ interface ProfileEditModalProps {
   isOpen: boolean
   username: string,
   password : string ,
-  onSave: (newName: string, newPassword: string) => void
+  onSave: (newName: string) => void
   onClose: () => void
 }
 
 export default function ProfileModalEdit({
   isOpen,
   username,
-  password,
+  // password,
   onSave,
   onClose,
 }: ProfileEditModalProps) {
   const [input, setInput] = useState({
     usernames: "",
-    password : "" ,
+    // password : "" ,
   });
   // console.log('ProfileModalEdit rendered with username:', username);
   const [error, setError] = useState('')
@@ -26,7 +26,7 @@ export default function ProfileModalEdit({
 
   const handleSave = () => {
     const trimmedName = input.usernames.trim();
-    const trimmedPassword = input.password.trim();
+    // const trimmedPassword = input.password.trim();
     if (!trimmedName) {
       setError('Name cannot be empty')
       return
@@ -36,24 +36,24 @@ export default function ProfileModalEdit({
       return
     }
 
-    if (!trimmedPassword) {
-      setError('Password cannot be empty')
-      return
-    }
-    if (trimmedPassword.length < 8) {
-      setError('Password must be at least 8 characters')
-      return
-    }
-    onSave(trimmedName , trimmedPassword)
+    // if (!trimmedPassword) {
+    //   setError('Password cannot be empty')
+    //   return
+    // }
+    // if (trimmedPassword.length < 8) {
+    //   setError('Password must be at least 8 characters')
+    //   return
+    // }
+    onSave(trimmedName)
     setError('')
     setInput({ ...input, usernames: trimmedName })
-    setInput({ ...input, password: password })
+    // setInput({ ...input, password: password })
     onClose()
   }
 
   const handleClose = () => {
     setInput({ ...input, usernames: username })
-    setInput({ ...input, password: password })
+    // setInput({ ...input, password: password })
     setError('')
     onClose()
   }
@@ -71,10 +71,10 @@ export default function ProfileModalEdit({
   // if (isOpen) {
     setInput({
       usernames: username,
-      password: password,
+      // password: password,
     });
   // }
-}, [isOpen, username, password]);
+}, [isOpen, username]);
   if (!isOpen){
     return null  ;
   }
@@ -116,7 +116,7 @@ export default function ProfileModalEdit({
           )}
         </div>
 
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <label className="block text-sm font-medium text-foreground mb-2">
             Password
           </label>
@@ -135,7 +135,7 @@ export default function ProfileModalEdit({
           {error && (
             <p className="text-sm text-destructive mt-1">{error}</p>
           )}
-        </div>
+        </div> */}
 
         <div className="flex gap-3 justify-end">
           <button
