@@ -36,25 +36,56 @@ function Home() {
     });
     setIsEditModalOpen(true);
   };
-  const addTodo = (title: string, description: string, status: string, priority: string, due_date: Date) => {
-    const newTodo: Todo = {
-      todo_id: Date.now().toString(),
+  // const addTodo = (title: string, description: string, status: string, priority: string, due_date: Date) => {
+  //   const newTodo: Todo = {
+  //     todo_id: Date.now().toString(),
+  //     title,
+  //     description,
+  //     status,
+  //     priority,
+  //     completed: false,
+  //     due_date,
+  //     createdAt: new Date(),
+  //   }
+  //   setTodos([newTodo, ...todos])
+  // }
+
+  const addTodo = async (
+  title: string,
+  description: string,
+  status: string,
+  priority: string,
+  due_date: Date
+) => {
+  try {
+    const response = await api.post("/user/task/addTask/",{
       title,
       description,
       status,
       priority,
-      completed: false,
       due_date,
-      createdAt: new Date(),
+    },{
+      withCredentials : true
+    });
+
+    if ( response.data ) {
+    const newTodo: Todo = response.data.data;
+    // setTodos((prev) => [newTodo, ...prev]);
+    setTodos([newTodo , ...todos]) ;
+    console.log(response.data) ;
     }
-    setTodos([newTodo, ...todos])
+
+  } catch (error) {
+    console.error("Failed to add todo:", error);
   }
+};
 
   const toggleTodo = (id: string) => {
     setTodos(todos.map(todo =>
-      todo.todo_id === id ? { ...todo, completed: !todo.completed } : todo
+      todo.todo_id === id ? { ...todo, completed: !todo.status } : todo
     ))
   }
+
 
   const deleteTodo = async (todo_id: string) => {
     try {
@@ -72,13 +103,14 @@ function Home() {
   }
 
   const filteredTodos = todos.filter(todo => {
-    if (filter === 'active') return !todo.completed
-    if (filter === 'completed') return todo.completed
+    if (filter === 'all') return todo.status ;
+    if (filter === 'active') return todo.status === 'pending'
+    if (filter === 'completed') return todo.status === 'completed'
     return true
   })
 
-  const completedCount = todos.filter(todo => todo.completed).length
-  const activeCount = todos.filter(todo => !todo.completed).length
+  const completedCount = todos.filter(todo => todo.status ).length
+  const activeCount = todos.filter(todo => !todo.status).length
 
   const handleSaveProfile = async (username: string) => {
     try {
@@ -103,7 +135,7 @@ function Home() {
     const getData = async () => {
       try {
         const data = await userData();
-        console.log('Fetched user data:', data[0]);
+        // console.log('Fetched user data:', data[0]);
         setUser({
           ...user,
           user_id: data[0].user_id,

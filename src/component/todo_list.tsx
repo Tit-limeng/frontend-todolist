@@ -53,7 +53,8 @@ export default function TodoList({ todos, onToggle, onDelete }: TodoListProps) {
           >
             {todo.title}
           </span>
-
+{todo.status}
+{new Date(todo.due_date).toLocaleDateString()}
           <button
             onClick={() => onDelete(todo.todo_id)}
             className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"

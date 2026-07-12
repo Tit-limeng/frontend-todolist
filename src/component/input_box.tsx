@@ -38,25 +38,25 @@
 //           // className="flex-1 rounded-xl border-2 border-border bg-card px-5 py-3 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
 //           className="flex-1 rounded-xl border-2 border-border bg-card px-5 py-3 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-[#c45349]/20"
 //         />
-//         <button
-//           type="submit"
-//           disabled={!value.trim()}
-//           className="rounded-xl bg-primary px-6 py-3 font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95"
-//         >
-//           <svg
-//             className="w-5 h-5"
-//             fill="none"
-//             stroke="currentColor"
-//             viewBox="0 0 24 24"
-//           >
-//             <path
-//               strokeLinecap="round"
-//               strokeLinejoin="round"
-//               strokeWidth={2}
-//               d="M12 5v14m7-7H5"
-//             />
-//           </svg>
-//         </button>
+        // <button
+        //   type="submit"
+        //   disabled={!value.trim()}
+        //   className="rounded-xl bg-primary px-6 py-3 font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95"
+        // >
+        //   <svg
+        //     className="w-5 h-5"
+        //     fill="none"
+        //     stroke="currentColor"
+        //     viewBox="0 0 24 24"
+        //   >
+        //     <path
+        //       strokeLinecap="round"
+        //       strokeLinejoin="round"
+        //       strokeWidth={2}
+        //       d="M12 5v14m7-7H5"
+        //     />
+        //   </svg>
+        // </button>
 //       </div>
 //     </form>
 //   )
@@ -64,6 +64,7 @@
 
 
 import { useState, useRef } from "react";
+import toast, { Toaster } from 'react-hot-toast';
 
 interface TodoInputProps {
   onAdd: (
@@ -77,7 +78,7 @@ interface TodoInputProps {
 
 export default function TodoInput({ onAdd }: TodoInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-
+  const [error , setError] = useState("") ;
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -98,16 +99,49 @@ export default function TodoInput({ onAdd }: TodoInputProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.title.trim()) return;
+    // if (!formData.title.trim()) return;
+    // onAdd(
+    //   formData.title,
+    //   formData.description,
+    //   formData.status,
+    //   formData.priority,
+    //   new Date(formData.due_date)
+    // );
+  if (!formData.title.trim()) {
+    return toast.error("Titile is required...!");
+  }
 
-    onAdd(
-      formData.title,
-      formData.description,
-      formData.status,
-      formData.priority,
-      new Date(formData.due_date)
-    );
+  if (!formData.description.trim()) {
+    return toast.error("Description is required");
+  }
 
+  // if (!formData.status) {
+  //   return setError("Status is required");
+  // }
+
+  // if (!formData.priority) {
+  //   return setError("Priority is required");
+  // }
+
+  if (!formData.due_date) {
+    return toast.error("Due date is required");
+  }
+
+  const dueDate = new Date(formData.due_date);
+
+  if (isNaN(dueDate.getTime())) {
+    return toast.error("Invalid due date");
+  }
+
+   onAdd(
+    formData.title.trim(),
+    formData.description.trim(),
+    formData.status,
+    formData.priority,
+    dueDate
+  );
+
+  setError('');
     setFormData({
       title: "",
       description: "",
@@ -115,11 +149,14 @@ export default function TodoInput({ onAdd }: TodoInputProps) {
       priority: "low",
       due_date: "",
     });
-
+    toast.success('Your Task has been saved !') ;
     inputRef.current?.focus();
   };
 
   return (
+    <>
+    <Toaster position="top-right"
+  reverseOrder={false} />
     <form onSubmit={handleSubmit} className="space-y-3">
       <input
         ref={inputRef}
@@ -167,13 +204,34 @@ export default function TodoInput({ onAdd }: TodoInputProps) {
         onChange={handleChange}
         className="w-full rounded-xl border px-5 py-3"
       />
+      {error}
 
-      <button
+      {/* <button
         type="submit"
         className="rounded-xl bg-primary px-6 py-3 text-white"
       >
         Add Todo
-      </button>
+      </button> */}
+              <button
+          type="submit"
+          // disabled={!value.trim()}
+          className="rounded-xl bg-primary px-6 py-3 font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95"
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 5v14m7-7H5"
+            />
+          </svg>
+        </button>
     </form>
+    </>
   );
 }
