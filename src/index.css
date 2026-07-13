@@ -31,13 +31,4 @@ body {
   --primary : #f11946 ;
   --primary-foreground: oklch(0.13 0.01 283);
 }
-/* @theme inline {
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-accent: var(--accent);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-} */
 
