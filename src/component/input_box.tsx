@@ -183,6 +183,7 @@ export default function TodoInput({ onAdd }: TodoInputProps) {
         className="w-full rounded-xl border px-5 py-3"
       >
         <option value="pending">Pending</option>
+        <option value="in_progress">In Progress</option>
         <option value="completed">Completed</option>
       </select>
 

@@ -6,20 +6,24 @@ import type { LoadingBarRef } from "react-top-loading-bar";
 import { useRef } from "react";
 
 
-export  function ProtectedRoute() {
+export function ProtectedRoute() {
+  const loadingBarRef = useRef<LoadingBarRef>(null);
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
+    loadingBarRef.current?.continuousStart();
     const checkAuth = async () => {
       try {
-        await api.get("/auth/check"); 
+        await api.get("/auth/check");
+        await new Promise(i=>setTimeout(i,1500));
         setAuthenticated(true);
-      } catch (error ) {
+      } catch (error) {
         setAuthenticated(false);
         console.error("Authentication check failed:", error);
       } finally {
         setLoading(false);
+        loadingBarRef.current?.complete();
       }
     };
 
@@ -27,7 +31,16 @@ export  function ProtectedRoute() {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <>
+
+      <LoadingBar
+        color="#f11946"
+        ref={loadingBarRef}
+        height={4}
+        shadow
+      />
+
+    </>;
   }
 
   return authenticated ? <Outlet /> : <Navigate to="/auth/login" replace />;
@@ -46,10 +59,11 @@ export function GuestRoute() {
     const checkAuth = async () => {
       try {
 
-      if (location.pathname === "/auth/forgot-password") {
-        return <Outlet />;
-      }
+        if (location.pathname === "/auth/forgot-password") {
+          return <Outlet />;
+        }
         await api.get("/auth/check");
+        await new Promise(i=>setTimeout(i,1500));
         setAuthenticated(true);
       } catch {
         setAuthenticated(false);
@@ -66,7 +80,7 @@ export function GuestRoute() {
     return (
       <>
         <LoadingBar
-          color="#6fc276"
+          color="#f11946"
           ref={loadingBarRef}
           height={4}
           shadow

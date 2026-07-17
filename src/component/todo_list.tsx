@@ -21,11 +21,10 @@ export default function TodoList({ todos, onToggle, onDelete }: TodoListProps) {
         >
           <button
             onClick={() => onToggle(todo.todo_id)}
-            className={`flex-shrink-0 w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${
-              todo.completed
+            className={`flex-shrink-0 w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${todo.completed
                 ? 'bg-primary border-primary'
                 : 'border-border hover:border-primary'
-            }`}
+              }`}
           >
             {todo.completed && (
               <svg
@@ -45,16 +44,15 @@ export default function TodoList({ todos, onToggle, onDelete }: TodoListProps) {
           </button>
 
           <span
-            className={`flex-1 text-lg transition-all ${
-              todo.completed
+            className={`flex-1 text-lg transition-all ${todo.completed
                 ? 'text-muted-foreground line-through'
                 : 'text-foreground'
-            }`}
+              }`}
           >
             {todo.title}
           </span>
-{todo.status}
-{new Date(todo.due_date).toLocaleDateString()}
+          {todo.status}
+          {new Date(todo.due_date).toLocaleDateString()}
           <button
             onClick={() => onDelete(todo.todo_id)}
             className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"

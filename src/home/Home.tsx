@@ -5,12 +5,14 @@ import UserProfile from '../component/user_profile'
 import TodoInput from '../component/input_box'
 import TodoStats from '../component/state'
 import TodoList from '../component/todo_list'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { userData, getUserTaskList, remoteTask, api } from '../api/api'
-import type { Todo } from '../types/task'
+import type { Todo } from '../types/task';
+import LoadingBar from "react-top-loading-bar";
+import type { LoadingBarRef } from "react-top-loading-bar";
 
 function Home() {
-
+  const loadingBarRef = useRef<LoadingBarRef>(null);
   const [todos, setTodos] = useState<Todo[]>([]);
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all')
   const [user, setUser] = useState({
@@ -24,10 +26,6 @@ function Home() {
 
 
   const openProfile = async () => {
-    // if (!username) {
-    //   const data = await userData();
-    //   setUsername(data[0].username);
-    // }
     setUser({
       user_id: user.user_id,
       username: user.username,
@@ -36,19 +34,6 @@ function Home() {
     });
     setIsEditModalOpen(true);
   };
-  // const addTodo = (title: string, description: string, status: string, priority: string, due_date: Date) => {
-  //   const newTodo: Todo = {
-  //     todo_id: Date.now().toString(),
-  //     title,
-  //     description,
-  //     status,
-  //     priority,
-  //     completed: false,
-  //     due_date,
-  //     createdAt: new Date(),
-  //   }
-  //   setTodos([newTodo, ...todos])
-  // }
 
   const addTodo = async (
   title: string,
@@ -57,6 +42,7 @@ function Home() {
   priority: string,
   due_date: Date
 ) => {
+  loadingBarRef.current?.continuousStart() ;
   try {
     const response = await api.post("/user/task/addTask/",{
       title,
@@ -69,15 +55,19 @@ function Home() {
     });
 
     if ( response.data ) {
+      await new Promise(i => setTimeout(i,1500))
     const newTodo: Todo = response.data.data;
     // setTodos((prev) => [newTodo, ...prev]);
     setTodos([newTodo , ...todos]) ;
-    console.log(response.data) ;
+    loadingBarRef.current?.complete() ;
+
+    // console.log(response.data) ;
     }
 
   } catch (error) {
     console.error("Failed to add todo:", error);
-  }
+    loadingBarRef.current?.complete() ;
+  } 
 };
 
   const toggleTodo = (id: string) => {
@@ -159,6 +149,12 @@ function Home() {
   }, []);
   return (
     <>
+     <LoadingBar
+        color="#f11946"
+        ref={loadingBarRef}
+        height={4}
+        shadow={true}
+      />
       <main className="min-h-screen bg-background pb-12">
         {/* Profile Edit Modal */}
         <ProfileModalEdit

@@ -123,7 +123,7 @@ export default function LoginPage() {
     return (
         <>
         <LoadingBar
-        color="#6fc276"
+        color="#f11946"
         ref={loadingBarRef}
         height={4}
         shadow={true}
