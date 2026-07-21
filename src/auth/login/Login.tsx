@@ -6,7 +6,6 @@ import FormInput from '../../component/form_input'
 import { api, userData } from '../../api/api';
 import type { User } from '../../types/user';
 import { useRef } from "react";
-// import LoadingBar, { LoadingBarRef } from "react-top-loading-bar";
 import LoadingBar from "react-top-loading-bar";
 import type { LoadingBarRef } from "react-top-loading-bar";
 import { useNavigate } from 'react-router-dom' ;
@@ -87,10 +86,7 @@ export default function LoginPage() {
                 withCredentials: true,
             });
             getData();
-            // const user = await userData();
-            // console.log('User data fetched:', user);
-            // setData(user);
-            // console.log('Login response:', login.data);
+            
             navigate('/') ;
         } catch (error) {
             setErrors({

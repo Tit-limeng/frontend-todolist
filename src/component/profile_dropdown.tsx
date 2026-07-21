@@ -18,7 +18,6 @@ export default function ProfileDropdown({
 }: ProfileDropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  // Close dropdown on outside click
   useEffect(() => {
     if (!isOpen) return
 
@@ -35,7 +34,6 @@ export default function ProfileDropdown({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [isOpen, onClose])
 
-  // Close on Escape key
   useEffect(() => {
     if (!isOpen) return
 
@@ -56,14 +54,11 @@ export default function ProfileDropdown({
       ref={dropdownRef}
       className="absolute top-full right-0 mt-2 w-56 rounded-lg border border-border bg-card shadow-lg z-40 overflow-hidden"
     >
-      {/* Header with user info */}
       <div className="border-b border-border bg-secondary px-4 py-3">
         <p className="text-sm font-semibold text-foreground">{username}</p>
       </div>
 
-      {/* Menu items */}
       <div className="py-2">
-        {/* Edit Profile */}
         <button
           onClick={() => {
             onEdit()
@@ -87,7 +82,6 @@ export default function ProfileDropdown({
           Edit Profile
         </button>
 
-        {/* Settings Link */}
         <Link
           to="/settings"
           onClick={onClose}
@@ -115,10 +109,8 @@ export default function ProfileDropdown({
           Settings
         </Link>
 
-        {/* Divider */}
         <div className="border-t border-border my-2"></div>
 
-        {/* Logout */}
         <button
           onClick={() => {
             onLogout()

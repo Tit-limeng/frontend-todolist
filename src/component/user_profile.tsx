@@ -5,9 +5,7 @@ import { logoutUser } from "../api/api";
 interface UserProfileProps {
   username: string
   onProfileClick: () => void
-  // userName: string
   onEditClick: () => void
-  // onLogout: () => void
 }
 
 import { useNavigate } from "react-router-dom";

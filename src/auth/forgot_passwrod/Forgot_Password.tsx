@@ -16,11 +16,7 @@ interface FormData {
   confirmPassword: string
 }
 
-// interface FormErrors {
-//   email?: string
-//   otp?: string
-//   submit?: string
-// }
+
 
 interface FormErrors {
   otp?: string;

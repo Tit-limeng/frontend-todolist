@@ -39,7 +39,6 @@ export default function RegisterPage() {
   const emails =sessionStorage.getItem('email')
   const router = useNavigate();
 
-  // const [params] = useSearchParams();
   
 
   const validateForm = (): boolean => {
@@ -82,54 +81,6 @@ export default function RegisterPage() {
       }))
     }
   }
-
-
-  // test 
-
-//    const handleResetPassword = async (
-//   password: string,
-//   confirmPassword: string
-// ) => {
-//   if (password !== confirmPassword) {
-//     setErrors({
-//       confirmPassword: "Passwords do not match",
-//     });
-//     return;
-//   }
-
-//   setIsLoading(true);
-
-//   try {
-//     console.log("this is user id :" , id ,email) ;
-//     const response = await api.patch(
-//       `/user/forgot-password/updatePassword/${id}`,
-//       {
-//         password,
-//         email ,
-//       }
-//     );
-
-//     if (response.data) {
-//       setErrors({});
-//       setStep("success");
-//       console.log('this is data response : ',response.data) ;
-//     } else {
-//       setErrors({
-//         submit: response.data,
-//       });
-//     }
-//   } catch (error : any) {
-//     setErrors({
-//       submit:
-//         error?.response?.data?.message ||
-//         "Failed to reset password.",
-//     });
-//     console.log(error) ;
-//   } finally {
-//     setIsLoading(false);
-//   }
-// };
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

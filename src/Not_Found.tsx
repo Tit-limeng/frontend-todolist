@@ -4,7 +4,7 @@ export default function NotFound() {
   return (
     <main className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
       <div className="max-w-lg w-full text-center">
-        {/* Animated 404 Header */}
+        
         <div className="mb-8">
           <div className="inline-block">
             <h1 className="text-9xl md:text-[120px] font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent leading-none animate-pulse">
@@ -13,12 +13,12 @@ export default function NotFound() {
           </div>
         </div>
 
-        {/* Illustration */}
+       
         <div className="mb-8 flex justify-center">
           <div className="text-6xl">🧭</div>
         </div>
 
-        {/* Friendly Message */}
+       
         <div className="mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
             Looks like you got lost in the task jungle!
@@ -28,7 +28,7 @@ export default function NotFound() {
           </p>
         </div>
 
-        {/* Action Buttons */}
+        
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
             to="/"
@@ -44,7 +44,6 @@ export default function NotFound() {
           </Link>
         </div>
 
-        {/* Helpful Links */}
         <div className="mt-12 pt-8 border-t border-border">
           <p className="text-sm text-muted-foreground mb-4">Need help?</p>
           <a
@@ -55,7 +54,6 @@ export default function NotFound() {
           </a>
         </div>
 
-        {/* Decorative Elements */}
         <div className="mt-12 space-y-2 text-xs text-muted-foreground/50">
           <p>Error Code: 404 | Page Not Found</p>
           <p>Return to safety with your tasks</p>
