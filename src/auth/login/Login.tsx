@@ -9,6 +9,7 @@ import { useRef } from "react";
 import LoadingBar from "react-top-loading-bar";
 import type { LoadingBarRef } from "react-top-loading-bar";
 import { useNavigate } from 'react-router-dom' ;
+import GoogleLoginButton from '../../component/gooleLoginButton';
 
 interface FormData {
     email: string
@@ -237,6 +238,10 @@ export default function LoginPage() {
                     </Link>
                 </p>
             </form>
+<br />
+            <div>
+                <GoogleLoginButton />
+            </div>
         </AuthLayout>
         </>
     )
