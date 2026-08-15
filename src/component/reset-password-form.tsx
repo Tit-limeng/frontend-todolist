@@ -3,7 +3,7 @@ import { useState } from 'react'
 import FormInput from './form_input'
 
 interface ResetPasswordFormProps {
-  email: string | unknown 
+  email: string  
   isLoading?: boolean
   onSubmit: (password: string, confirmPassword: string) => void
   onBack: () => void
@@ -54,7 +54,7 @@ export default function ResetPasswordForm({
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-2">
         <label className="text-sm font-medium text-foreground">
-          Resetting password for {String(email)}
+          Resetting password for {email}
         </label>
         <p className="text-xs text-muted-foreground">
           Enter a strong new password for your account
