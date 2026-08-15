@@ -54,7 +54,7 @@ export default function ResetPasswordForm({
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-2">
         <label className="text-sm font-medium text-foreground">
-          Resetting password for {email ? email : ''}
+          Resetting password for {email ?? ''}
         </label>
         <p className="text-xs text-muted-foreground">
           Enter a strong new password for your account
