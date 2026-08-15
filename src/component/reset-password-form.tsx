@@ -54,7 +54,7 @@ export default function ResetPasswordForm({
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-2">
         <label className="text-sm font-medium text-foreground">
-          Resetting password for {email}
+          Resetting password for {typeof email === 'string' ? email : ''}
         </label>
         <p className="text-xs text-muted-foreground">
           Enter a strong new password for your account
@@ -89,27 +89,6 @@ export default function ResetPasswordForm({
         }
       />
 
-      {/* <FormInput
-        label="Confirm Password"
-        type={showConfirmPassword ? 'text' : 'password'}
-        placeholder="Confirm new password"
-        value={confirmPassword}
-        onChange={(value) => {
-          setConfirmPassword(value)
-          if (errors.confirmPassword)
-            setErrors({ ...errors, confirmPassword: undefined })
-        }}
-        error={errors.confirmPassword}
-        rightIcon={
-          <button
-            type="button"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {showConfirmPassword ? '🙈' : '👁️'}
-          </button>
-        }
-      /> */}
 
       <FormInput
         label="Confirm Password"
